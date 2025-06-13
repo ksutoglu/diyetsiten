@@ -1,0 +1,23 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import SuHesaplayici from '~/components/widgets/SuHesaplayici.astro';
+
+const metadata = {
+  title: 'Günlük Su İhtiyacı Hesaplama',
+  description: 'Kilonuza göre günlük olarak ne kadar su tüketmeniz gerektiğini öğrenin.',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 py-16 sm:py-20">
+    <div class="mx-auto max-w-2xl">
+      <div class="mb-10 text-center">
+        <h1 class="mb-4 text-4xl font-bold md:text-5xl">{metadata.title}</h1>
+        <p class="text-xl text-muted">{metadata.description}</p>
+      </div>
+
+      <SuHesaplayici />
+
+    </div>
+  </section>
+</Layout>

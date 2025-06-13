@@ -176,7 +176,14 @@ export const findLatestPosts = async ({ count }: { count?: number }): Promise<Ar
 /** */
 export const getStaticPathsBlogList = async ({ paginate }: { paginate: PaginateFunction }) => {
   if (!isBlogEnabled || !isBlogListRouteEnabled) return [];
-  return paginate(await fetchPosts(), {
+
+  // --- DEĞİŞİKLİK BURADA BAŞLIYOR ---
+  const allPosts = await fetchPosts();
+  // Kategorisi 'Tarifler' OLMAYANLARI filtreliyoruz
+  const posts = allPosts.filter((post) => post.category?.slug !== 'tarifler'); 
+  // --- DEĞİŞİKLİK BURADA BİTİYOR ---
+
+  return paginate(posts, { // <-- Filtrelenmiş 'posts' listesini kullanıyoruz
     params: { blog: BLOG_BASE || undefined },
     pageSize: blogPostsPerPage,
   });

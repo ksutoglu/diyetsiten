@@ -1,0 +1,58 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Layout from '~/layouts/PageLayout.astro';
+import { fetchPosts } from '~/utils/blog';
+import ListItem from '~/components/widgets/ListItem.astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const allPosts = await fetchPosts();
+  const allTags = new Set<string>();
+  allPosts.forEach((post) => {
+    if (post.category?.slug === 'tarifler' && post.tags) {
+      post.tags.forEach((tag) => {
+        if (tag.slug) {
+          allTags.add(tag.slug);
+        }
+      });
+    }
+  });
+  return Array.from(allTags).map((tag) => ({ params: { tag } }));
+};
+
+const { tag } = Astro.params;
+
+// --- İŞTE YENİ VE ÖNEMLİ KONTROL ---
+// Eğer URL'den gelen 'tag' bir metin (string) değilse,
+// bu sayfanın bir anlamı yok, 404 sayfasına yönlendir.
+if (typeof tag !== 'string') {
+  return Astro.redirect('/404');
+}
+
+const allPosts = await fetchPosts();
+
+const tarifler = allPosts.filter((post) => {
+  if (post.category?.slug !== 'tarifler') return false;
+  const postTags = post.tags?.map((t) => t.slug) || [];
+  return postTags.includes(tag);
+});
+
+const kategoriAdi = tag.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+
+const metadata = { title: `Tarifler: ${kategoriAdi}` };
+---
+
+<Layout metadata={metadata}>
+  <section class="px-6 py-16 mx-auto max-w-6xl">
+    <div class="mb-12 text-center">
+      <p class="text-lg text-primary">Tarif Etiketi</p>
+      <h1 class="text-4xl md:text-5xl font-bold">{kategoriAdi}</h1>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {tarifler.length > 0 ? (
+        tarifler.map((post) => <ListItem post={post} />)
+      ) : (
+        <p class="text-center col-span-full">Bu etikete sahip tarif bulunmuyor.</p>
+      )}
+    </div>
+  </section>
+</Layout>

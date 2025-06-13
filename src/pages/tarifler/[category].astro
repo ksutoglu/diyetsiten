@@ -1,0 +1,48 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+// Artık doğru bileşeni import ediyoruz:
+import ListItem from '~/components/widgets/ListItem.astro';
+
+export async function getStaticPaths() {
+  const tarifKategorileri = ['ana-yemek', 'ara-ogun', 'icecek', 'kahvalti', 'tatli'];
+  return tarifKategorileri.map((category) => ({
+    params: { category: category.toLowerCase() },
+  }));
+}
+
+const { category } = Astro.params;
+const posts: Array<CollectionEntry<'post'>> = await getCollection('post');
+
+const tarifler = posts
+  .filter(post => post.data.publishDate)
+  .filter(post => {
+    const postTags = post.data.tags?.map(tag => tag.toLowerCase().replace(/ /g, '-')) || [];
+    return post.data.category === 'Tarifler' && postTags.includes(category);
+  })
+  .sort((a, b) => (b.data.publishDate?.valueOf() || 0) - (a.data.publishDate?.valueOf() || 0));
+
+const kategoriAdi = category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+const metadata = {
+  title: `${kategoriAdi} - Tarifler`,
+};
+---
+<Layout metadata={metadata}>
+  <section class="px-4 py-16 sm:py-20">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-10 text-center md:mb-16">
+        <h1 class="mb-4 text-4xl font-bold md:text-5xl">{kategoriAdi}</h1>
+        <p class="text-xl text-muted">Lezzetli ve sağlıklı {kategoriAdi.toLowerCase()} tarifleri.</p>
+      </div>
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {tarifler.length > 0 ? (
+          tarifler.map((tarif) => <ListItem post={tarif} />)
+        ) : (
+          <p class="text-center col-span-full">Bu kategoride henüz tarif bulunmuyor.</p>
+        )}
+      </div>
+    </div>
+  </section>
+</Layout>

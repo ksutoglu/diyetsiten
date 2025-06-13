@@ -1,0 +1,23 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import BkiHesaplayici from '~/components/widgets/BkiHesaplayici.astro';
+
+const metadata = {
+  title: 'Vücut Kitle İndeksi (BKİ) Hesaplama',
+  description: 'Boy ve kilo bilgilerinizi girerek Vücut Kitle İndeksinizi kolayca hesaplayın ve sağlık durumunuz hakkında bilgi edinin.',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 py-16 sm:py-20">
+    <div class="mx-auto max-w-2xl">
+      <div class="mb-10 text-center">
+        <h1 class="mb-4 text-4xl font-bold md:text-5xl">{metadata.title}</h1>
+        <p class="text-xl text-muted">{metadata.description}</p>
+      </div>
+
+      <BkiHesaplayici />
+
+    </div>
+  </section>
+</Layout>

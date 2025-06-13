@@ -1,183 +1,112 @@
 import { getPermalink, getBlogPermalink, getAsset } from './utils/permalinks';
 
-export const headerData = {
+import type { Props as HeaderProps } from '~/components/widgets/Header.astro';
+
+export const headerData: HeaderProps = {
+  isSticky: true,
+  showToggleTheme: true, // Tekrar görünür yaptık, istersen 'false' yapabilirsin.
+  showRssFeed: false,
+  
   links: [
     {
-      text: 'Homes',
+      text: 'Anasayfa',
+      href: getPermalink('/'),
+    },
+    {
+      text: 'Ben Kimim?',
       links: [
-        {
-          text: 'SaaS',
-          href: getPermalink('/homes/saas'),
-        },
-        {
-          text: 'Startup',
-          href: getPermalink('/homes/startup'),
-        },
-        {
-          text: 'Mobile App',
-          href: getPermalink('/homes/mobile-app'),
-        },
-        {
-          text: 'Personal',
-          href: getPermalink('/homes/personal'),
-        },
+        { text: 'Hakkımda', href: getPermalink('/hakkimda') },
+        { text: 'Danışan Yorumları', href: getPermalink('/danisan-yorumlari') },
       ],
     },
     {
-      text: 'Pages',
+      text: 'Beslenme Danışmanlığı',
       links: [
-        {
-          text: 'Features (Anchor Link)',
-          href: getPermalink('/#features'),
-        },
-        {
-          text: 'Services',
-          href: getPermalink('/services'),
-        },
-        {
-          text: 'Pricing',
-          href: getPermalink('/pricing'),
-        },
-        {
-          text: 'About us',
-          href: getPermalink('/about'),
-        },
-        {
-          text: 'Contact',
-          href: getPermalink('/contact'),
-        },
-        {
-          text: 'Terms',
-          href: getPermalink('/terms'),
-        },
-        {
-          text: 'Privacy policy',
-          href: getPermalink('/privacy'),
-        },
+        { text: 'Kilo Alma', href: getPermalink('/danismanlik/kilo-alma') },
+        { text: 'Kilo Verme', href: getPermalink('/danismanlik/kilo-verme') },
+        { text: 'Kilo Koruma', href: getPermalink('/danismanlik/kilo-koruma') },
+        { text: 'Hastalıklarda Beslenme', href: getPermalink('/danismanlik/hastaliklarda-beslenme') },
+        { text: 'Gebelikte Beslenme', href: getPermalink('/danismanlik/gebelikte-beslenme') },
       ],
     },
     {
-      text: 'Landing',
+      text: 'Tarifler',
       links: [
-        {
-          text: 'Lead Generation',
-          href: getPermalink('/landing/lead-generation'),
-        },
-        {
-          text: 'Long-form Sales',
-          href: getPermalink('/landing/sales'),
-        },
-        {
-          text: 'Click-Through',
-          href: getPermalink('/landing/click-through'),
-        },
-        {
-          text: 'Product Details (or Services)',
-          href: getPermalink('/landing/product'),
-        },
-        {
-          text: 'Coming Soon or Pre-Launch',
-          href: getPermalink('/landing/pre-launch'),
-        },
-        {
-          text: 'Subscription',
-          href: getPermalink('/landing/subscription'),
-        },
+        { text: 'Tüm Tarifler', href: getPermalink('/tarifler') }, // Bu ana tarifler sayfası
+        { text: 'Ana Yemek', href: getPermalink('ana-yemek', 'tag') },
+        { text: 'Ara Öğün', href: getPermalink('ara-ogun', 'tag') },
+        { text: 'İçecek', href: getPermalink('icecek', 'tag') },
+        { text: 'Kahvaltı', href: getPermalink('kahvalti', 'tag') },
+        { text: 'Tatlı', href: getPermalink('tatli', 'tag') },
       ],
     },
     {
       text: 'Blog',
+      href: getBlogPermalink(),
+    },
+    {
+      text: 'Hesaplamalar',
       links: [
-        {
-          text: 'Blog List',
-          href: getBlogPermalink(),
-        },
-        {
-          text: 'Article',
-          href: getPermalink('get-started-website-with-astro-tailwind-css', 'post'),
-        },
-        {
-          text: 'Article (with MDX)',
-          href: getPermalink('markdown-elements-demo-post', 'post'),
-        },
-        {
-          text: 'Category Page',
-          href: getPermalink('tutorials', 'category'),
-        },
-        {
-          text: 'Tag Page',
-          href: getPermalink('astro', 'tag'),
-        },
+        { text: 'BKİ Hesaplama', href: getPermalink('/hesaplamalar/bki-hesaplama') },
+        { text: 'Günlük Su İhtiyacı', href: getPermalink('/hesaplamalar/gunluk-su-ihtiyaci') },
+        { text: 'İnsülin Direnci Hesaplama', href: getPermalink('/hesaplamalar/insulin-direnci') }, // EKLENEN SATIR
       ],
     },
     {
-      text: 'Widgets',
-      href: '#',
+      text: 'İletişim',
+      href: getPermalink('/iletisim'),
     },
   ],
-  actions: [{ text: 'Download', href: 'https://github.com/onwidget/astrowind', target: '_blank' }],
+  
+  actions: [{ text: 'Randevu Al', href: getPermalink('/iletisim'), variant: 'primary' }],
 };
 
+
 export const footerData = {
+  // Footer'daki link sütunları
   links: [
     {
-      title: 'Product',
+      title: 'Hızlı Erişim',
       links: [
-        { text: 'Features', href: '#' },
-        { text: 'Security', href: '#' },
-        { text: 'Team', href: '#' },
-        { text: 'Enterprise', href: '#' },
-        { text: 'Customer stories', href: '#' },
-        { text: 'Pricing', href: '#' },
-        { text: 'Resources', href: '#' },
+        { text: 'Hakkımda', href: getPermalink('/hakkimda') },
+        { text: 'Danışan Yorumları', href: getPermalink('/danisan-yorumlari') },
+        { text: 'Blog', href: getBlogPermalink() },
+        { text: 'İletişim', href: getPermalink('/iletisim') },
       ],
     },
     {
-      title: 'Platform',
+      title: 'Temel Hizmetler',
       links: [
-        { text: 'Developer API', href: '#' },
-        { text: 'Partners', href: '#' },
-        { text: 'Atom', href: '#' },
-        { text: 'Electron', href: '#' },
-        { text: 'AstroWind Desktop', href: '#' },
+        { text: 'Kilo Verme Danışmanlığı', href: getPermalink('/danismanlik/kilo-verme') },
+        { text: 'Kilo Alma Danışmanlığı', href: getPermalink('/danismanlik/kilo-alma') },
+        { text: 'Hastalıklarda Beslenme', href: getPermalink('/danismanlik/hastaliklarda-beslenme') },
+        { text: 'Gebelikte Beslenme', href: getPermalink('/danismanlik/gebelikte-beslenme') },
       ],
     },
     {
-      title: 'Support',
+      title: 'Faydalı Araçlar',
       links: [
-        { text: 'Docs', href: '#' },
-        { text: 'Community Forum', href: '#' },
-        { text: 'Professional Services', href: '#' },
-        { text: 'Skills', href: '#' },
-        { text: 'Status', href: '#' },
-      ],
-    },
-    {
-      title: 'Company',
-      links: [
-        { text: 'About', href: '#' },
-        { text: 'Blog', href: '#' },
-        { text: 'Careers', href: '#' },
-        { text: 'Press', href: '#' },
-        { text: 'Inclusion', href: '#' },
-        { text: 'Social Impact', href: '#' },
-        { text: 'Shop', href: '#' },
+        { text: 'BKİ Hesaplama', href: getPermalink('/hesaplamalar/bki-hesaplama') },
+        { text: 'Günlük Su İhtiyacı', href: getPermalink('/hesaplamalar/gunluk-su-ihtiyaci') },
+        { text: 'Tüm Tarifler', href: getPermalink('/tarifler') }, // Bu sayfayı daha sonra oluşturabiliriz
       ],
     },
   ],
-  secondaryLinks: [
-    { text: 'Terms', href: getPermalink('/terms') },
-    { text: 'Privacy Policy', href: getPermalink('/privacy') },
-  ],
+
+  // Alttaki 'Gizlilik Politikası' gibi linkler. Şimdilik boş kalabilir.
+  secondaryLinks: [],
+
+  // Sosyal Medya ikonları ve linkleri
   socialLinks: [
-    { ariaLabel: 'X', icon: 'tabler:brand-x', href: '#' },
+    // Kendi sosyal medya linklerini # yerine yapıştır
     { ariaLabel: 'Instagram', icon: 'tabler:brand-instagram', href: '#' },
     { ariaLabel: 'Facebook', icon: 'tabler:brand-facebook', href: '#' },
-    { ariaLabel: 'RSS', icon: 'tabler:rss', href: getAsset('/rss.xml') },
-    { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/onwidget/astrowind' },
+    // İstersen WhatsApp linki de ekleyebiliriz:
+    // { ariaLabel: 'WhatsApp', icon: 'tabler:brand-whatsapp', href: 'https://wa.me/905xxxxxxxxx' },
   ],
+
+  // En alttaki telif hakkı notu
   footNote: `
-    <img class="w-5 h-5 md:w-6 md:h-6 md:-mt-0.5 bg-cover mr-1.5 rtl:mr-0 rtl:ml-1.5 float-left rtl:float-right rounded-sm" src="https://onwidget.com/favicon/favicon-32x32.png" alt="onWidget logo" loading="lazy"></img>
-    Made by <a class="text-blue-600 underline dark:text-muted" href="https://onwidget.com/"> onWidget</a> · All rights reserved.
+    Tüm Hakları Saklıdır © ${new Date().getFullYear()} · Feyza Subaşı
   `,
 };

@@ -1,0 +1,29 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import BlogList from '~/components/blog/List.astro';
+import Headline from '~/components/blog/Headline.astro';
+
+// Ana 'fetchPosts' fonksiyonunu kullanıyoruz, bu tüm yazıları getirir.
+import { fetchPosts } from '~/utils/blog';
+
+const allPosts = await fetchPosts();
+
+// Şimdi, sadece kategorisi 'Tarifler' olanları filtreliyoruz
+const tarifler = allPosts.filter((post) => post.category?.slug === 'tarifler');
+
+const metadata = {
+  title: 'Lezzetli ve Sağlıklı Tarifler',
+  description: 'Feyza Subaşı tarafından hazırlanan, yapımı kolay ve besleyici tarifler.',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="px-6 sm:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
+    <Headline subtitle="Feyza Subaşı'dan hem lezzetli hem de sağlıklı tarifler.">
+      Tüm Tarifler
+    </Headline>
+
+    <BlogList posts={tarifler} />
+
+  </section>
+</Layout>

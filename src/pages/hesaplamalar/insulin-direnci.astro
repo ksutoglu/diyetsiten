@@ -1,0 +1,23 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HomaIRHesaplayici from '~/components/widgets/HomaIRHesaplayici.astro';
+
+const metadata = {
+  title: 'İnsülin Direnci (HOMA-IR) Hesaplama',
+  description: 'Açlık kan şekeri ve açlık insülin değerlerinizi girerek HOMA-IR endeksinizi hesaplayın.',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 py-16 sm:py-20">
+    <div class="mx-auto max-w-2xl">
+      <div class="mb-10 text-center">
+        <h1 class="mb-4 text-4xl font-bold md:text-5xl">{metadata.title}</h1>
+        <p class="text-xl text-muted">{metadata.description}</p>
+      </div>
+
+      <HomaIRHesaplayici />
+
+    </div>
+  </section>
+</Layout>

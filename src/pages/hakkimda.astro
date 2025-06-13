@@ -1,0 +1,56 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { Image } from 'astro:assets';
+// Profil fotoğrafını buraya koyacaksın.
+import profilResmi from '~/assets/images/profile.png';
+
+const metadata = {
+  title: 'Hakkımda - Uzman Diyetisyen Feyza Subaşı',
+  description: 'Benimle, beslenme felsefemle ve eğitim geçmişimle ilgili daha fazla bilgi edinin.',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 py-16 sm:py-20">
+    <div class="mx-auto max-w-4xl">
+      <div class="mb-10 text-center md:mb-16">
+        <h1 class="mb-4 text-4xl font-bold md:text-5xl">Ben Kimim?</h1>
+      </div>
+
+      <div class="grid gap-10 md:grid-cols-2">
+        <div class="flex items-center justify-center">
+          <Image
+            src={profilResmi}
+            alt="Uzman Diyetisyen Feyza Subaşı Profil Fotoğrafı"
+            class="h-auto w-full max-w-sm rounded-lg object-cover shadow-lg"
+            widths={[200, 400]}
+            sizes="(max-width: 767px) 200px, 400px"
+          />
+        </div>
+
+        <div class="prose prose-lg max-w-none dark:prose-invert">
+          <h2>Merhaba!</h2>
+          <p>
+            Ben Feyza Subaşı. Sağlıklı beslenmenin karmaşık ve kısıtlayıcı olmak zorunda olmadığına inanıyorum. 
+            Amacım, size sürdürülebilir, keyifli ve tamamen size özel beslenme alışkanlıkları kazandırarak 
+            yaşam kalitenizi artırmaktır.
+          </p>
+
+          <h3>Beslenme Felsefem</h3>
+          <p>
+            Yasaklar ve şok diyetler yerine, vücudunuzu dinlemeyi ve onu doğru besinlerle desteklemeyi öğreten bir 
+            yaklaşım benimsiyorum. Her bireyin metabolizması, yaşam tarzı ve hedefleri farklıdır. Bu yüzden 
+            "tek tip" bir diyet programı yerine, sizinle birlikte çalışarak size en uygun yol haritasını çiziyorum.
+          </p>
+
+          <h3>Eğitim ve Sertifikalar</h3>
+          <ul>
+            <li>[Üniversite Adı], Beslenme ve Diyetetik Bölümü</li>
+            <li>[Sertifika Adı], [Kurum Adı]</li>
+            <li>[Katıldığınız Seminer veya Eğitim], [Yıl]</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
