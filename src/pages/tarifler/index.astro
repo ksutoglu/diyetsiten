@@ -3,12 +3,10 @@ import Layout from '~/layouts/PageLayout.astro';
 import BlogList from '~/components/blog/List.astro';
 import Headline from '~/components/blog/Headline.astro';
 
-// Ana 'fetchPosts' fonksiyonunu kullanıyoruz, bu tüm yazıları getirir.
+// YANLIŞ FONKSİYON YERİNE DOĞRUSUNU KULLANIYORUZ
 import { fetchPosts } from '~/utils/blog';
 
 const allPosts = await fetchPosts();
-
-// Şimdi, sadece kategorisi 'Tarifler' olanları filtreliyoruz
 const tarifler = allPosts.filter((post) => post.category?.slug === 'tarifler');
 
 const metadata = {
@@ -22,8 +20,6 @@ const metadata = {
     <Headline subtitle="Feyza Subaşı'dan hem lezzetli hem de sağlıklı tarifler.">
       Tüm Tarifler
     </Headline>
-
     <BlogList posts={tarifler} />
-
   </section>
 </Layout>

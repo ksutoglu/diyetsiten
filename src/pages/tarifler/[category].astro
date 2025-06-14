@@ -1,48 +1,58 @@
 ---
+import type { GetStaticPaths } from 'astro';
 import Layout from '~/layouts/PageLayout.astro';
-import { getCollection } from 'astro:content';
-import type { CollectionEntry } from 'astro:content';
-// Artık doğru bileşeni import ediyoruz:
-import ListItem from '~/components/widgets/ListItem.astro';
+import BlogList from '~/components/blog/List.astro';
+import Headline from '~/components/blog/Headline.astro';
+import { fetchPosts } from '~/utils/blog';
+import { CATEGORY_BASE } from '~/utils/permalinks';
 
-export async function getStaticPaths() {
-  const tarifKategorileri = ['ana-yemek', 'ara-ogun', 'icecek', 'kahvalti', 'tatli'];
-  return tarifKategorileri.map((category) => ({
-    params: { category: category.toLowerCase() },
+export const getStaticPaths: GetStaticPaths = async () => {
+  const allPosts = await fetchPosts();
+  const recipeTags = new Set<string>();
+  allPosts.forEach((post) => {
+    if (post.category?.slug === 'tarifler' && post.tags) {
+      post.tags.forEach((tag) => {
+        if (tag.slug) {
+          recipeTags.add(tag.slug);
+        }
+      });
+    }
+  });
+  return Array.from(recipeTags).map((tagSlug) => ({
+    params: { category: tagSlug },
   }));
-}
+};
 
 const { category } = Astro.params;
-const posts: Array<CollectionEntry<'post'>> = await getCollection('post');
 
-const tarifler = posts
-  .filter(post => post.data.publishDate)
-  .filter(post => {
-    const postTags = post.data.tags?.map(tag => tag.toLowerCase().replace(/ /g, '-')) || [];
-    return post.data.category === 'Tarifler' && postTags.includes(category);
-  })
-  .sort((a, b) => (b.data.publishDate?.valueOf() || 0) - (a.data.publishDate?.valueOf() || 0));
+// --- İŞTE EKLENEN VE HATAYI ÇÖZEN KONTROL ---
+if (typeof category !== 'string') {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not Found',
+  });
+}
+// --- KONTROL BİTTİ ---
 
-const kategoriAdi = category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+const allPosts = await fetchPosts();
+const tarifler = allPosts.filter((post) => {
+  if (post.category?.slug !== 'tarifler') return false;
+  const postTags = post.tags?.map((t) => t.slug) || [];
+  return postTags.includes(category);
+});
 
-const metadata = {
-  title: `${kategoriAdi} - Tarifler`,
-};
+const kategoriAdi = category.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+
+const metadata = { title: `Tarifler: ${kategoriAdi}` };
 ---
+
 <Layout metadata={metadata}>
-  <section class="px-4 py-16 sm:py-20">
-    <div class="mx-auto max-w-5xl">
-      <div class="mb-10 text-center md:mb-16">
-        <h1 class="mb-4 text-4xl font-bold md:text-5xl">{kategoriAdi}</h1>
-        <p class="text-xl text-muted">Lezzetli ve sağlıklı {kategoriAdi.toLowerCase()} tarifleri.</p>
-      </div>
-      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {tarifler.length > 0 ? (
-          tarifler.map((tarif) => <ListItem post={tarif} />)
-        ) : (
-          <p class="text-center col-span-full">Bu kategoride henüz tarif bulunmuyor.</p>
-        )}
-      </div>
-    </div>
+  <section class="px-6 sm:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
+    <Headline subtitle={`Feyza Subaşı'dan lezzetli ve sağlıklı tarifler`}>{kategoriAdi}</Headline>
+    {tarifler.length > 0 ? (
+      <BlogList posts={tarifler} />
+    ) : (
+      <p class="text-center col-span-full">Bu kategoride henüz tarif bulunmuyor.</p>
+    )}
   </section>
 </Layout>
