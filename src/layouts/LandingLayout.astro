@@ -2,15 +2,13 @@
 import PageLayout from '~/layouts/PageLayout.astro';
 import Header from '~/components/widgets/Header.astro';
 
-import { getHeaderData, headerData as staticHeaderData } from '~/navigation';
+import { getHeaderData, footerData } from '~/navigation';
 import type { MetaData } from '~/types';
-const headerData = typeof getHeaderData === 'function'
-  ? getHeaderData(Astro.url.pathname)
-  : staticHeaderData;
 
 export interface Props {
   metadata?: MetaData;
 }
+const headerData = await getHeaderData();
 
 const { metadata } = Astro.props;
 ---
