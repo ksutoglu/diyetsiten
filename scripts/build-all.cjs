@@ -6,7 +6,38 @@ const path = require('path');
 // DİZİNLERİ BURADA TANIMLIYORUZ:
 const ROOT = process.cwd();
 const ASTRO_DIR  = process.env.ASTRO_DIR  || ROOT;                           // Astro kökteyse böyle kalsın
-const STUDIO_DIR = process.env.STUDIO_DIR || path.join(ROOT, 'diyetsiten', 'diyetsiten'); // Sanity burada
+function findStudioDir() {
+  const { existsSync, readFileSync } = require('fs');
+  const path = require('path');
+
+  const candidates = [
+    process.env.STUDIO_DIR,                          // env ile override
+    path.join(ROOT, 'diyetsiten', 'diyetsiten'),
+    path.join(ROOT, 'diyetsiten'),
+    path.join(ROOT, 'studio'),
+    path.join(ROOT, 'sanity'),
+    ROOT, // son çare: kök
+  ].filter(Boolean);
+for (const dir of candidates) {
+    const pkg = path.join(dir, 'package.json');
+    const sanityCfgTs = path.join(dir, 'sanity.config.ts');
+    const sanityCfgJs = path.join(dir, 'sanity.config.js');
+
+    if (!existsSync(dir) || !existsSync(pkg)) continue;
+
+    // sanity bağımlılığı var mı?
+    try {
+      const json = JSON.parse(readFileSync(pkg, 'utf8'));
+      const deps = {...(json.dependencies||{}), ...(json.devDependencies||{})};
+      const looksLikeStudio = deps.sanity || deps['@sanity/cli'] || existsSync(sanityCfgTs) || existsSync(sanityCfgJs);
+      if (looksLikeStudio) return dir;
+    } catch (_) {}
+  }
+  throw new Error('Sanity klasörü bulunamadı. STUDIO_DIR env ile yol verin.');
+}
+
+const STUDIO_DIR = findStudioDir();
+console.log('STUDIO_DIR =>', STUDIO_DIR);
 
 // ÇIKTILAR:
 const ASTRO_OUT   = path.join(ASTRO_DIR, 'dist');        // Astro build çıkışı
