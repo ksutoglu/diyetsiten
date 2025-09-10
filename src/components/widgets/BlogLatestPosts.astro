@@ -1,63 +1,49 @@
 ---
-import { APP_BLOG } from 'astrowind:config';
-
-import Grid from '~/components/blog/Grid.astro';
-
 import { getBlogPermalink } from '~/utils/permalinks';
-import { findLatestPosts } from '~/utils/blog';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
-import type { Widget } from '~/types';
 import Button from '~/components/ui/Button.astro';
+import { urlFor } from '~/lib/sanity'; // Sanity'den görsel çekmek için
+import { format } from 'date-fns'; // Tarihleri formatlamak için
 
-export interface Props extends Widget {
-  title?: string;
-  linkText?: string;
-  linkUrl?: string | URL;
-  information?: string;
-  count?: number;
-}
-
-const {
-  title = await Astro.slots.render('title'),
-  linkText = 'View all posts',
-  linkUrl = getBlogPermalink(),
-  information = await Astro.slots.render('information'),
-  count = 4,
-
-  id,
-  isDark = false,
-  classes = {},
-  bg = await Astro.slots.render('bg'),
-} = Astro.props;
-
-const posts = APP_BLOG.isEnabled ? await findLatestPosts({ count }) : [];
+// index.astro'dan gelen 'posts' verisini burada yakalıyoruz
+const { posts = [], title = "Blog'dan Son Yazılar" } = Astro.props;
 ---
 
-{
-  APP_BLOG.isEnabled ? (
-    <WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container as string} bg={bg}>
-      <div class="flex flex-col lg:justify-between lg:flex-row mb-8">
-        {title && (
-          <div class="md:max-w-sm">
-            <h2
-              class="text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none group font-heading mb-2"
-              set:html={title}
+<WidgetWrapper>
+  <div class="mb-8 text-center">
+    <h2 class="text-3xl font-bold tracking-tight sm:text-4xl font-heading">
+      {title}
+    </h2>
+  </div>
+  <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    {posts.map((post) => (
+      <article class="group">
+        <a href={`/blog/${post.slug.current}`}>
+          <div class="relative">
+            <img 
+              src={urlFor(post.mainImage).width(400).height(250).url()}
+              alt={post.title}
+              class="w-full h-64 object-cover rounded-lg shadow-md transition-transform duration-300 ease-in-out group-hover:scale-105"
             />
-            {APP_BLOG.list.isEnabled && linkText && linkUrl && (
-              <Button variant="link" href={linkUrl}>
-                {' '}
-                {linkText} »
-              </Button>
-            )}
           </div>
-        )}
-
-        {information && <p class="text-muted dark:text-slate-400 lg:text-sm lg:max-w-md" set:html={information} />}
-      </div>
-
-      <Grid posts={posts} />
-    </WidgetWrapper>
-  ) : (
-    <Fragment />
-  )
-}
+          <div class="mt-4">
+            <p class="text-sm text-muted">
+              <time datetime={post.publishedAt}>
+                {format(new Date(post.publishedAt), 'dd MMMM yyyy')}
+              </time>
+            </p>
+            <h3 class="text-xl font-bold mt-2 group-hover:text-primary transition-colors">
+              {post.title}
+            </h3>
+            <p class="mt-2 text-gray-700 dark:text-slate-400">
+              {post.excerpt}
+            </p>
+          </div>
+        </a>
+      </article>
+    ))}
+  </div>
+  <div class="mt-12 text-center">
+    <Button variant="primary" href={getBlogPermalink()} text="Tüm Yazıları Gör" />
+  </div>
+</WidgetWrapper>

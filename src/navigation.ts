@@ -1,17 +1,11 @@
 import { getPermalink, getBlogPermalink, getAsset } from './utils/permalinks';
 
 import type { Props as HeaderProps } from '~/components/widgets/Header.astro';
+import { client } from '~/lib/sanity';
 
-export const headerData: HeaderProps = {
-  isSticky: true,
-  showToggleTheme: true, // Tekrar görünür yaptık, istersen 'false' yapabilirsin.
-  showRssFeed: false,
-  
-  links: [
-    {
-      text: 'Anasayfa',
-      href: getPermalink('/'),
-    },
+export const getHeaderData = async (): Promise<HeaderProps> => {
+  const staticLinks = [
+    { text: 'Anasayfa', href: getPermalink('/') },
     {
       text: 'Ben Kimim?',
       links: [
@@ -21,45 +15,53 @@ export const headerData: HeaderProps = {
     },
     {
       text: 'Beslenme Danışmanlığı',
-      links: [
-        { text: 'Kilo Alma', href: getPermalink('/danismanlik/kilo-alma') },
-        { text: 'Kilo Verme', href: getPermalink('/danismanlik/kilo-verme') },
-        { text: 'Kilo Koruma', href: getPermalink('/danismanlik/kilo-koruma') },
-        { text: 'Hastalıklarda Beslenme', href: getPermalink('/danismanlik/hastaliklarda-beslenme') },
-        { text: 'Gebelikte Beslenme', href: getPermalink('/danismanlik/gebelikte-beslenme') },
-      ],
+      links: [], // Burayı Sanity'den gelenlerle dolduracağız
     },
-    {
-      text: 'Tarifler',
-      links: [
-        { text: 'Tüm Tarifler', href: getPermalink('/tarifler') }, // Bu ana tarifler sayfası
-        { text: 'Ana Yemek', href: getPermalink('ana-yemek', 'tag') },
-        { text: 'Ara Öğün', href: getPermalink('ara-ogun', 'tag') },
-        { text: 'İçecek', href: getPermalink('icecek', 'tag') },
-        { text: 'Kahvaltı', href: getPermalink('kahvalti', 'tag') },
-        { text: 'Tatlı', href: getPermalink('tatli', 'tag') },
-      ],
-    },
-    {
-      text: 'Blog',
-      href: getBlogPermalink(),
-    },
-    {
-      text: 'Hesaplamalar',
-      links: [
-        { text: 'BKİ Hesaplama', href: getPermalink('/hesaplamalar/bki-hesaplama') },
-        { text: 'Günlük Su İhtiyacı', href: getPermalink('/hesaplamalar/gunluk-su-ihtiyaci') },
-        { text: 'İnsülin Direnci Hesaplama', href: getPermalink('/hesaplamalar/insulin-direnci') }, // EKLENEN SATIR
-      ],
-    },
-    {
-      text: 'İletişim',
-      href: getPermalink('/iletisim'),
-    },
-  ],
+    { text: 'Tarifler', links: []  },
+    { text: 'Blog', href: getBlogPermalink() },
+    { text: 'Hesaplamalar', links: [] },
+    { text: 'İletişim', href: getPermalink('/iletisim') },
+  ];
+  const calculatorPages = await client.fetch(`*[_type == "calculatorPage"]{pageTitle, "slug": title} | order(pageTitle asc)`);
+  const recipeCategories = await client.fetch(`*[_type == "recipeCategory"]{title, "slug": slug.current} | order(title asc)`); // YENİ: Tarif kategorilerini çekiyoruz
+  const danismanlikPages = await client.fetch(`*[_type == "danismanlik"]{title, "slug": slug.current} | order(title asc)`);
   
-  actions: [{ text: 'Randevu Al', href: getPermalink('/iletisim'), variant: 'primary' }],
+  
+  const danismanlikLinks = danismanlikPages.map(page => ({
+    text: page.title,
+    href: getPermalink(`/danismanliklar/${page.slug}`),
+  }));
+  const recipeCategoryLinks = recipeCategories.map(category => ({
+      text: category.title,
+      href: getPermalink(`/tarifler/kategori/${category.slug}`),
+  }));
+  recipeCategoryLinks.unshift({ text: 'Tüm Tarifler', href: getPermalink('/tarifler') });
+  const calculatorLinks = calculatorPages.map(page => ({
+    text: page.pageTitle,
+    href: getPermalink(`/hesaplamalar/${page.slug}`),
+  }));
+  const danismanlikMenu = staticLinks.find(link => link.text === 'Beslenme Danışmanlığı');
+  if (danismanlikMenu) {
+    danismanlikMenu.links = danismanlikLinks;
+  }
+  const recipeMenu = staticLinks.find(link => link.text === 'Tarifler');
+  if (recipeMenu) {
+    recipeMenu.links = recipeCategoryLinks;
+  }
+  const calculatorMenu = staticLinks.find(link => link.text === 'Hesaplamalar');
+  if (calculatorMenu) {
+    calculatorMenu.links = calculatorLinks;
+  }
+  
+
+  return {
+      isSticky: true,
+      showToggleTheme: true,
+      links: staticLinks,
+      actions: [{ text: 'Randevu Al', href: getPermalink('/iletisim'), variant: 'primary' }],
+    };
 };
+
 
 
 export const footerData = {

@@ -1,10 +1,14 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import HomaIRHesaplayici from '~/components/widgets/HomaIRHesaplayici.astro';
+import { client, urlFor } from '~/lib/sanity';
+import { PortableText } from 'astro-portabletext';
+
+// Sanity'den "İnsülin Direnci"ne ait içeriği çekiyoruz
+const data = await client.fetch(`*[_type == "calculatorPage" && title == "insulin-direnci"][0]`);
 
 const metadata = {
-  title: 'İnsülin Direnci (HOMA-IR) Hesaplama',
-  description: 'Açlık kan şekeri ve açlık insülin değerlerinizi girerek HOMA-IR endeksinizi hesaplayın.',
+  title: data?.pageTitle || 'İnsülin Direnci (HOMA-IR) Hesaplama',
 };
 ---
 
@@ -12,12 +16,16 @@ const metadata = {
   <section class="px-4 py-16 sm:py-20">
     <div class="mx-auto max-w-2xl">
       <div class="mb-10 text-center">
-        <h1 class="mb-4 text-4xl font-bold md:text-5xl">{metadata.title}</h1>
-        <p class="text-xl text-muted">{metadata.description}</p>
+        <h1 class="mb-4 text-4xl font-bold md:text-5xl">{data?.pageTitle}</h1>
       </div>
 
       <HomaIRHesaplayici />
 
+      {data?.content && (
+        <div class="prose dark:prose-invert max-w-none mt-12">
+          <PortableText value={data.content} />
+        </div>
+      )}
     </div>
   </section>
 </Layout>

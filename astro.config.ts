@@ -15,6 +15,10 @@ import astrowind from './vendor/integration';
 
 import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter';
 
+import sanityIntegration from "astro-sanity";
+
+
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const hasExternalScripts = false;
@@ -28,6 +32,7 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false,
     }),
+    
     sitemap(),
     mdx(),
     icon({
@@ -69,6 +74,12 @@ export default defineConfig({
     astrowind({
       config: './src/config.yaml',
     }),
+    sanityIntegration({
+        projectId: '9a4tp2sj', // Sanity projenizin ID'si
+        dataset: 'production', // Sanity dataset adınız
+        useCdn: false, 
+        apiVersion: '2024-07-06', // Tarihi güncel bir versiyon yapalım
+      }),
   ],
 
   image: {

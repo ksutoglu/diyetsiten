@@ -8,10 +8,39 @@ import Features2 from '~/components/widgets/Features2.astro';
 import Steps from '~/components/widgets/Steps.astro';
 import Content from '~/components/widgets/Content.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
+import RecipeLatestPosts from '~/components/widgets/RecipeLatestPosts.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import Stats from '~/components/widgets/Stats.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
+import Testimonials from '~/components/widgets/Testimonials.astro'; 
 
+import { client, urlFor } from '~/lib/sanity'; // Sanity bağlantımızı import ediyoruz
+
+const hizmetler = await client.fetch(`*[_type == "hizmet"]`);
+const latestPosts = await client.fetch(`*[_type == "post"] | order(publishedAt desc)[0...3]`);
+const faqs = await client.fetch(`*[_type == "faq"]`);
+const latestRecipes = await client.fetch(`*[_type == "recipe"]{..., "category": category->{title, slug}} | order(_createdAt desc)[0...3]`);
+const latestTestimonials = await client.fetch(`*[_type == "testimonial"] | order(_createdAt desc)[0...3]`);
+const heroData = await client.fetch(`*[_type == "hero"][0]`);
+
+const dynamicFaqsData = {
+  title: 'Sıkça Sorulan Sorular',
+  subtitle: 'Aklınıza takılan soruların cevaplarını burada bulabilirsiniz.',
+  items: faqs.map((faq) => ({
+    title: faq.question,
+    description: faq.answer,
+  })),
+};
+const dynamicFeaturesData = {
+  id: 'hizmetlerim',
+  title: 'Hizmetlerim',
+  subtitle: 'Size özel hazırladığım profesyonel beslenme danışmanlığı hizmetlerimle tanışın.',
+  items: hizmetler.map((hizmet) => ({
+    title: hizmet.title,
+    description: hizmet.kisaAciklama,
+    icon: hizmet.icon || 'tabler:heart-handshake',
+  })),
+};
 const metadata = {
   title: 'Uzman Diyetisyen F.SUBAŞI - Sağlıklı Beslenme ve Diyet Danışmanlığı',
   ignoreTitleTemplate: true,
@@ -22,28 +51,11 @@ const metadata = {
   <!-- Hero Widget ******************* -->
 
   <Hero
-    actions={[
-        {
-            variant: 'primary',
-            text: 'Randevu Al',
-            href: '/iletisim', 
-            icon: 'tabler:rocket',
-        },
-        { 
-            text: 'Hizmetlerim', 
-            href: '#hizmetler' 
-        },
-    ]}
-    image={{ src: '~/assets/images/hero-image4.png', alt: 'Sağlıklı besinler' }}
->
-    <Fragment slot="title">
-      Sağlıklı Yaşama <span class="text-accent dark:text-white">İlk Adım</span>
-    </Fragment>
-
-    <Fragment slot="subtitle">
-      Kişiye özel beslenme danışmanlığı ile hedeflerinize ulaşın. Ben <span class="font-semibold">Feyza Subaşı</span>, bu yolculukta yanınızdayım.
-    </Fragment>
-  </Hero>
+  title={heroData?.title}
+  subtitle={heroData?.subtitle}
+  actions={heroData?.actions}
+  image={heroData?.mainImage ? { src: urlFor(heroData.mainImage).url(), alt: heroData.title } : undefined}
+/>
 
   <!-- Note Widget ******************* -->
 
@@ -51,38 +63,7 @@ const metadata = {
 
   <!-- Features Widget *************** -->
 
-  <Features
-    id="hizmetler"
-    tagline="Danışmanlık"
-    title="Size Nasıl Yardımcı Olabilirim?"
-    subtitle="Sağlıklı bir yaşam tarzına adım atmanız için sunduğum profesyonel hizmetler."
-    items={[
-        {
-            title: 'Online Diyet Danışmanlığı',
-            description:
-                'Nerede olursanız olun, hedeflerinize uygun, size özel hazırladığım diyet programları ile süreci birlikte yönetelim.',
-            icon: 'tabler:device-laptop', // ikonları https://tabler-icons.io/ sitesinden bulabilirsin
-        },
-        {
-            title: 'Kilo Yönetimi (Alma/Verme)',
-            description:
-                'Sağlıklı kilo alma veya verme hedeflerinize, kalıcı alışkanlıklar kazanarak ve aç kalmadan ulaşın.',
-            icon: 'tabler:arrows-sort',
-        },
-        {
-            title: 'Hastalıklarda Beslenme',
-            description:
-                'Diyabet, tiroid, kalp hastalıkları gibi durumlarda tıbbi beslenme tedavisi ile yaşam kalitenizi artırın.',
-            icon: 'tabler:activity-heartbeat',
-        },
-        {
-            title: 'Sporcu Beslenmesi',
-            description:
-                'Performansınızı en üst seviyeye çıkarmak ve hedeflerinize ulaşmak için size özel sporcu beslenmesi programları.',
-            icon: 'tabler:barbell',
-        },
-    ]}
-/>
+  <Features {...dynamicFeaturesData} />
 
   <!-- Content Widget **************** -->
 
@@ -297,54 +278,16 @@ const metadata = {
 
   <!-- HighlightedPosts Widget ******* -->
 
-  <BlogLatestPosts
-    title="Find out more content in our Blog"
-    information={`The blog is used to display AstroWind documentation.
-                        Each new article will be an important step that you will need to know to be an expert in creating a website using Astro + Tailwind CSS.
-                        Astro is a very interesting technology. Thanks.
-                `}
-  />
+  <BlogLatestPosts posts={latestPosts} />
+
+  <RecipeLatestPosts recipes={latestRecipes} title="En Son Tarifler" />
+
+  <Testimonials testimonials={latestTestimonials} />
 
   <!-- FAQs Widget ******************* -->
+  
 
-  <FAQs
-    title="Frequently Asked Questions"
-    subtitle="Dive into the following questions to gain insights into the powerful features that AstroWind offers and how it can elevate your web development journey."
-    tagline="FAQs"
-    classes={{ container: 'max-w-6xl' }}
-    items={[
-      {
-        title: 'Why AstroWind?',
-        description:
-          "Michael Knight a young loner on a crusade to champion the cause of the innocent. The helpless. The powerless in a world of criminals who operate above the law. Here he comes Here comes Speed Racer. He's a demon on wheels.",
-      },
-      {
-        title: 'What do I need to start?',
-        description:
-          'Space, the final frontier. These are the voyages of the Starship Enterprise. Its five-year mission: to explore strange new worlds. Many say exploration is part of our destiny, but it’s actually our duty to future generations.',
-      },
-      {
-        title: 'How to install the Astro + Tailwind CSS template?',
-        description:
-          "Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.",
-      },
-      {
-        title: "What's something that you don't understand?",
-        description:
-          "A flower in my garden, a mystery in my panties. Heart attack never stopped old Big Bear. I didn't even know we were calling him Big Bear.",
-      },
-      {
-        title: 'What is something that you would like to try again?',
-        description:
-          "A business big enough that it could be listed on the NASDAQ goes belly up. Disappears! It ceases to exist without me. No, you clearly don't know who you're talking to, so let me clue you in.",
-      },
-      {
-        title: 'If you could only ask one question to each person you meet, what would that question be?',
-        description:
-          "This is not about revenge. This is about justice. A lot of things can change in twelve years, Admiral. Well, that's certainly good to know. About four years. I got tired of hearing how young I looked.",
-      },
-    ]}
-  />
+  <FAQs {...dynamicFaqsData} />
 
   <!-- Stats Widget ****************** -->
 

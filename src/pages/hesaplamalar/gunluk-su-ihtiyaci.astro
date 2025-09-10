@@ -1,10 +1,14 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import SuHesaplayici from '~/components/widgets/SuHesaplayici.astro';
+import { client, urlFor } from '~/lib/sanity';
+import { PortableText } from 'astro-portabletext';
+
+// Sanity'den "Günlük Su İhtiyacı"na ait içeriği çekiyoruz
+const data = await client.fetch(`*[_type == "calculatorPage" && title == "gunluk-su-ihtiyaci"][0]`);
 
 const metadata = {
-  title: 'Günlük Su İhtiyacı Hesaplama',
-  description: 'Kilonuza göre günlük olarak ne kadar su tüketmeniz gerektiğini öğrenin.',
+  title: data?.pageTitle || 'Günlük Su İhtiyacı Hesaplama',
 };
 ---
 
@@ -12,12 +16,16 @@ const metadata = {
   <section class="px-4 py-16 sm:py-20">
     <div class="mx-auto max-w-2xl">
       <div class="mb-10 text-center">
-        <h1 class="mb-4 text-4xl font-bold md:text-5xl">{metadata.title}</h1>
-        <p class="text-xl text-muted">{metadata.description}</p>
+        <h1 class="mb-4 text-4xl font-bold md:text-5xl">{data?.pageTitle}</h1>
       </div>
 
       <SuHesaplayici />
 
+      {data?.content && (
+        <div class="prose dark:prose-invert max-w-none mt-12">
+          <PortableText value={data.content} />
+        </div>
+      )}
     </div>
   </section>
 </Layout>
