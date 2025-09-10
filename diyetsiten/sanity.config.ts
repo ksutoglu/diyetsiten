@@ -13,8 +13,8 @@ export default defineConfig({
 
   projectId: '9a4tp2sj', // BU SİZİN PROJE ID'NİZ, DEĞİŞTİRMEYİN
   dataset: 'production', // BU DA DATASET ADINIZ, DEĞİŞTİRMEYİN
-  basePath: '/studio',   // <-- kritik
-  studio: {
+     // <-- kritik
+  studio: { basePath: '/studio',
   },
   plugins: [
       structureTool({
