@@ -3,6 +3,20 @@ import { urlFor } from '~/lib/sanity';
 import Button from '~/components/ui/Button.astro';
 
 const { testimonials = [], title = "Danışanlarım Ne Dedi?" } = Astro.props;
+const resolveImageSrc = (img: any, width?: number, height?: number) => {
+  if (!img) return '';
+  if (typeof img === 'string') return img;          // "https://..." gibi düz string
+  if (typeof img?.src === 'string') return img.src; // { src: "https://..." } nesnesi
+  try {
+    let b = urlFor(img);                            // Sanity image object
+    if (width) b = b.width(width);
+    if (height) b = b.height(height);
+    return b.url();
+  } catch {
+    return '';
+  }
+};
+
 ---
 
 <section class="py-16 sm:py-20 bg-gray-50 dark:bg-slate-800">
@@ -20,7 +34,7 @@ const { testimonials = [], title = "Danışanlarım Ne Dedi?" } = Astro.props;
             {testimonial.image && (
               <img
                 class="mr-4 h-12 w-12 rounded-full object-cover"
-                src={urlFor(testimonial.image).width(100).height(100).url()}
+                src={resolveImageSrc(testimonial.image, 100, 100)}
                 alt={testimonial.name}
               />
             )}
