@@ -20,7 +20,7 @@ export const getHeaderData = async (): Promise<HeaderProps> => {
     { text: 'Tarifler', links: []  },
     { text: 'Blog', href: getBlogPermalink() },
     { text: 'Hesaplamalar', links: [] },
-    { text: 'İletişim', href: getPermalink('/iletisim') },
+    //{ text: 'İletişim', href: getPermalink('/iletisim') },
   ];
   const calculatorPages = await client.fetch(`*[_type == "calculatorPage"]{pageTitle, "slug": title} | order(pageTitle asc)`);
   const recipeCategories = await client.fetch(`*[_type == "recipeCategory"]{title, "slug": slug.current} | order(title asc)`); // YENİ: Tarif kategorilerini çekiyoruz

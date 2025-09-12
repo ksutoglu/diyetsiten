@@ -23,6 +23,29 @@ export interface Item {
   icon?: string;
   href?: string;
 }
+export interface Feature {
+  _key: string; // Sanity'den gelen array elemanları için
+  title: string;
+  description: string;
+  icon: string;
+}
+export interface Post {
+  _id: string;
+  _createdAt: Date;
+  title: string;
+  slug: {
+    current: string;
+  };
+  mainImage?: {
+    asset: {
+      _ref: string;
+      _type: string;
+    };
+  };
+  excerpt?: string;
+  publishedAt: string;
+  body?: any; // Consider using a more specific type for Portable Text
+}
 
 // WIDGET'LARIN KULLANDIĞI TEMEL YAPI
 export interface Widget {

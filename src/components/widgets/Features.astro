@@ -1,7 +1,7 @@
 ---
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
-import ItemGrid from '~/components/ui/ItemGrid.astro';
 import Headline from '~/components/ui/Headline.astro';
+import { Icon } from 'astro-icon/components';
 import type { Features as Props } from '~/types';
 
 const {
@@ -9,7 +9,6 @@ const {
   subtitle = await Astro.slots.render('subtitle'),
   tagline = await Astro.slots.render('tagline'),
   items = [],
-  columns = 2,
   id,
   isDark = false,
   classes = {},
@@ -19,14 +18,21 @@ const {
 
 <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-5xl ${classes?.container ?? ''}`} bg={bg}>
   <Headline title={title} subtitle={subtitle} tagline={tagline} classes={classes?.headline} />
-  <ItemGrid
-    items={items}
-    columns={columns}
-    classes={{
-      container: '',
-      title: 'md:text-[1.3rem]',
-      icon: 'text-white bg-primary rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0',
-      ...(classes?.items ? { items: classes.items } : {}),
-    }}
-  />
+  
+  {/* YENİ: Hizmetleri yan yana sıralayacak olan grid yapısı */}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+    {items.map(({ title: itemTitle, description, icon }) => (
+      <div class="flex flex-row items-start">
+        <div class="flex-shrink-0">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white">
+            {icon && <Icon name={icon} class="h-7 w-7" />}
+          </div>
+        </div>
+        <div class="ml-4">
+          {itemTitle && <h3 class="text-xl font-bold">{itemTitle}</h3>}
+          {description && <p class="mt-2 text-muted">{description}</p>}
+        </div>
+      </div>
+    ))}
+  </div>
 </WidgetWrapper>
