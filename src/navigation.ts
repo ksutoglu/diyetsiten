@@ -30,16 +30,16 @@ export const getHeaderData = async (): Promise<HeaderProps> => {
     : [];
   
   
-  const danismanlikLinks = danismanlikPages.map(page => ({
+  const danismanlikLinks = danismanlikPages.map((page: { title: string; slug: string }) => ({
     text: page.title,
     href: getPermalink(`/danismanliklar/${page.slug}`),
   }));
-  const recipeCategoryLinks = recipeCategories.map(category => ({
+  const recipeCategoryLinks = recipeCategories.map((category: { title: string; slug: string }) => ({
       text: category.title,
       href: getPermalink(`/tarifler/kategori/${category.slug}`),
   }));
   recipeCategoryLinks.unshift({ text: 'Tüm Tarifler', href: getPermalink('/tarifler') });
-  const calculatorLinks = calculatorPages.map(page => ({
+  const calculatorLinks = calculatorPages.map((page: { pageTitle: string; slug: string }) => ({
     text: page.pageTitle,
     href: getPermalink(`/hesaplamalar/${page.slug}`),
   }));

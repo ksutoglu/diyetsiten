@@ -1,8 +1,6 @@
 [build]
   publish = "dist"
   command = "npm run build"
-[build.processing.html]
-  pretty_urls = false
 [[headers]]
   for = "/_astro/*"
   [headers.values]
@@ -10,10 +8,10 @@
 # /studio -> Sanity host
 [[redirects]]
   from = "/studio"
-  to   = "https://diyetsiten.sanity.studio"
+  to   = "https://9a4tp2sj.sanity.studio"
   status = 301
 
 [[redirects]]
   from = "/studio/*"
-  to   = "https://diyetsiten.sanity.studio/:splat"
-  status = 200
+  to   = "https://9a4tp2sj.sanity.studio/:splat"
+  status = 301
