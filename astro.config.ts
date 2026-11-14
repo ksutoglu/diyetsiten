@@ -1,7 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
@@ -10,12 +10,14 @@ import partytown from '@astrojs/partytown';
 import icon from 'astro-icon';
 import compress from 'astro-compress';
 import type { AstroIntegration } from 'astro';
+import node from '@astrojs/node';
 
 import astrowind from './vendor/integration';
 
 import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter';
 
-import sanityIntegration from "astro-sanity";
+import { calculatorsEnabled } from './src/lib/site';
+import sanityIntegration from 'astro-sanity';
 
 
 
@@ -27,13 +29,27 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
 
 export default defineConfig({
   output: 'static',
+  adapter: node({ mode: 'standalone' }),
+  env: {
+    schema: {
+      ADMIN_PASSWORD: envField.string({ context: 'server', access: 'secret', optional: true }),
+      ADMIN_SESSION_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
+      SANITY_API_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true }),
+      SANITY_API_WRITE_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true }),
+    },
+  },
+  redirects: {
+    '/studio': 'https://9a4tp2sj.sanity.studio/',
+  },
 
   integrations: [
     tailwind({
       applyBaseStyles: false,
     }),
     
-    sitemap(),
+    sitemap({
+      filter: (page) => calculatorsEnabled || !page.includes('/hesaplamalar'),
+    }),
     mdx(),
     icon({
       include: {

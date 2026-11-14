@@ -4,12 +4,10 @@ import Header from '~/components/widgets/Header.astro';
 import Footer from '~/components/widgets/Footer.astro';
 import Announcement from '~/components/widgets/Announcement.astro';
 
+import { SITE } from 'astrowind:config';
 import { getHeaderData, footerData } from '~/navigation';
 import type { MetaData } from '~/types';
-import { client } from '~/lib/sanity'; // YENİ: Sanity bağlantısını ekle
 
-// YENİ: Genel site ayarlarını burada bir kez çekiyoruz
-const settings = await client.fetch(`*[_type == "siteSettings"][0]`);
 const headerData = await getHeaderData();
 
 export interface Props {
@@ -25,13 +23,13 @@ const { metadata } = Astro.props;
   </slot>
   <slot name="header">
     {/* YENİ: Site adını Header'a gönderiyoruz */}
-    <Header {...headerData} siteTitle={settings?.title} />
+    <Header {...headerData} siteTitle={SITE.name} />
   </slot>
   <main>
     <slot />
   </main>
   <slot name="footer">
     {/* YENİ: Site adını Footer'a gönderiyoruz */}
-    <Footer {...footerData} siteTitle={settings?.title} />
+    <Footer {...footerData} siteTitle={SITE.name} />
   </slot>
 </Layout>

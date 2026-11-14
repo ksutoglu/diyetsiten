@@ -1,6 +1,6 @@
 site:
-  name: SağlıklıYaşam
-  site: 'https://astrowind.vercel.app'
+  name: Donusum Hareketi
+  site: 'https://donusumhareketi.com'
   base: '/'
   trailingSlash: false
 
@@ -9,14 +9,14 @@ site:
 # Default SEO metadata
 metadata:
   title:
-    default: AstroWind
-    template: '%s — AstroWind'
-  description: "\U0001F680 Suitable for Startups, Small Business, Sass Websites, Professional Portfolios, Marketing Websites, Landing Pages & Blogs."
+    default: Donusum Hareketi
+    template: '%s — Donusum Hareketi'
+  description: 'Donusum Hareketi. Kişiye özel beslenme danışmanlığı.'
   robots:
     index: true
     follow: true
   openGraph:
-    site_name: AstroWind
+    site_name: Donusum Hareketi
     images:
       - url: '~/assets/images/default.png'
         width: 1200
@@ -28,7 +28,7 @@ metadata:
     cardType: summary_large_image
 
 i18n:
-  language: en
+  language: tr
   textDirection: ltr
 
 apps:

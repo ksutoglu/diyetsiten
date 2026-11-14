@@ -3,6 +3,9 @@ import Layout from '~/layouts/PageLayout.astro';
 import BkiHesaplayici from '~/components/widgets/BkiHesaplayici.astro';
 import { client, urlFor } from '~/lib/sanity';
 import { PortableText } from 'astro-portabletext';
+import { calculatorsEnabled } from '~/lib/site';
+
+if (!calculatorsEnabled) return Astro.redirect('/404');
 
 // Sanity'den "BKİ Hesaplama"ya ait içeriği çekiyoruz
 const data = await client.fetch(`*[_type == "calculatorPage" && title == "bki-hesaplama"][0]`);

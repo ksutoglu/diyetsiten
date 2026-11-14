@@ -1,0 +1,22 @@
+---
+import '@fontsource-variable/inter';
+import './admin.css';
+---
+
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>İçerik paneli</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>Panel için JavaScript gerekli.</noscript>
+    <script>
+      import { boot } from './client';
+      boot();
+    </script>
+  </body>
+</html>

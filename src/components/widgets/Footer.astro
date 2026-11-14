@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { client } from '~/lib/sanity'; // Sanity bağlantımızı import ediyoruz
+import { client } from '~/lib/sanity';
+import { calculatorsEnabled } from '~/lib/site';
 
 // Sanity'den genel site ayarlarını çekiyoruz
 const settings = await client.fetch(`*[_type == "siteSettings"][0]`);
@@ -13,7 +14,14 @@ const socialLinks = settings.socialLinks?.map(link => ({
 }));
 
 const footNote = settings.footerText || `Tüm Hakları Saklıdır © ${new Date().getFullYear()}`;
-const links = settings.footerLinks || []; 
+const links = (settings.footerLinks || [])
+  .map((column) => ({
+    ...column,
+    links: (column.links || []).filter(
+      (link) => calculatorsEnabled || !String(link.href || '').includes('hesaplamalar'),
+    ),
+  }))
+  .filter((column) => column.links.length > 0); 
 // Footer'daki statik linkler (bunları da isterseniz Sanity'e taşıyabiliriz)
 
 ---

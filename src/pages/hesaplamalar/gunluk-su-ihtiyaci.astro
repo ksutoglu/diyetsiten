@@ -3,6 +3,9 @@ import Layout from '~/layouts/PageLayout.astro';
 import SuHesaplayici from '~/components/widgets/SuHesaplayici.astro';
 import { client, urlFor } from '~/lib/sanity';
 import { PortableText } from 'astro-portabletext';
+import { calculatorsEnabled } from '~/lib/site';
+
+if (!calculatorsEnabled) return Astro.redirect('/404');
 
 // Sanity'den "Günlük Su İhtiyacı"na ait içeriği çekiyoruz
 const data = await client.fetch(`*[_type == "calculatorPage" && title == "gunluk-su-ihtiyaci"][0]`);

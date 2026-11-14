@@ -2,6 +2,7 @@ import { getPermalink, getBlogPermalink, getAsset } from './utils/permalinks';
 
 import type { Props as HeaderProps } from '~/components/widgets/Header.astro';
 import { client } from '~/lib/sanity';
+import { calculatorsEnabled } from '~/lib/site';
 
 export const getHeaderData = async (): Promise<HeaderProps> => {
   const staticLinks = [
@@ -19,12 +20,14 @@ export const getHeaderData = async (): Promise<HeaderProps> => {
     },
     { text: 'Tarifler', links: []  },
     { text: 'Blog', href: getBlogPermalink() },
-    { text: 'Hesaplamalar', links: [] },
+    ...(calculatorsEnabled ? [{ text: 'Hesaplamalar', links: [] as { text: string; href: string }[] }] : []),
     //{ text: 'İletişim', href: getPermalink('/iletisim') },
   ];
-  const calculatorPages = await client.fetch(`*[_type == "calculatorPage"]{pageTitle, "slug": title} | order(pageTitle asc)`);
-  const recipeCategories = await client.fetch(`*[_type == "recipeCategory"]{title, "slug": slug.current} | order(title asc)`); // YENİ: Tarif kategorilerini çekiyoruz
   const danismanlikPages = await client.fetch(`*[_type == "danismanlik"]{title, "slug": slug.current} | order(title asc)`);
+  const recipeCategories = await client.fetch(`*[_type == "recipeCategory"]{title, "slug": slug.current} | order(title asc)`);
+  const calculatorPages = calculatorsEnabled
+    ? await client.fetch(`*[_type == "calculatorPage"]{pageTitle, "slug": title} | order(pageTitle asc)`)
+    : [];
   
   
   const danismanlikLinks = danismanlikPages.map(page => ({
@@ -88,9 +91,13 @@ export const footerData = {
     {
       title: 'Faydalı Araçlar',
       links: [
-        { text: 'BKİ Hesaplama', href: getPermalink('/hesaplamalar/bki-hesaplama') },
-        { text: 'Günlük Su İhtiyacı', href: getPermalink('/hesaplamalar/gunluk-su-ihtiyaci') },
-        { text: 'Tüm Tarifler', href: getPermalink('/tarifler') }, // Bu sayfayı daha sonra oluşturabiliriz
+        ...(calculatorsEnabled
+          ? [
+              { text: 'BKİ Hesaplama', href: getPermalink('/hesaplamalar/bki-hesaplama') },
+              { text: 'Günlük Su İhtiyacı', href: getPermalink('/hesaplamalar/gunluk-su-ihtiyaci') },
+            ]
+          : []),
+        { text: 'Tüm Tarifler', href: getPermalink('/tarifler') },
       ],
     },
   ],

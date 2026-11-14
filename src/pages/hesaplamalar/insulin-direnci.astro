@@ -3,6 +3,9 @@ import Layout from '~/layouts/PageLayout.astro';
 import HomaIRHesaplayici from '~/components/widgets/HomaIRHesaplayici.astro';
 import { client, urlFor } from '~/lib/sanity';
 import { PortableText } from 'astro-portabletext';
+import { calculatorsEnabled } from '~/lib/site';
+
+if (!calculatorsEnabled) return Astro.redirect('/404');
 
 // Sanity'den "İnsülin Direnci"ne ait içeriği çekiyoruz
 const data = await client.fetch(`*[_type == "calculatorPage" && title == "insulin-direnci"][0]`);

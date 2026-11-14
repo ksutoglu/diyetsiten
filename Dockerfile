@@ -10,8 +10,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-FROM nginx:stable-alpine AS deploy
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
-
+FROM base AS deploy
+ENV HOST=0.0.0.0
+ENV PORT=8080
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package.json ./package.json
 EXPOSE 8080
+CMD ["node", "./dist/server/entry.mjs"]
